@@ -2,14 +2,13 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase
 import { getDatabase, ref, onValue, update } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js';
 
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    databaseURL: "YOUR_DATABASE_URL",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID",
-    measurementId: "YOUR_MEASUREMENT_ID"
+    apiKey: "AIzaSyC346gJHt-Dg7_bjzYw7k1D6j0tcalxht4",
+    authDomain: "goelectric-e9299.firebaseapp.com",
+    projectId: "goelectric-e9299",
+    storageBucket: "goelectric-e9299.appspot.com",
+    messagingSenderId: "81618360543",
+    appId: "1:81618360543:web:67a9a4d38ec18400c1316a",
+    measurementId: "G-6FZQSDWEZJ"
 };
 
 const app = initializeApp(firebaseConfig);
