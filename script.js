@@ -1,43 +1,70 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
+import { getDatabase, ref, onValue, update } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js';
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC346gJHt-Dg7_bjzYw7k1D6j0tcalxht4",
-  authDomain: "goelectric-e9299.firebaseapp.com",
-  databaseURL: "https://goelectric-e9299-default-rtdb.firebaseio.com",
-  projectId: "goelectric-e9299",
-  storageBucket: "goelectric-e9299.appspot.com",
-  messagingSenderId: "81618360543",
-  appId: "1:81618360543:web:67a9a4d38ec18400c1316a",
-  measurementId: "G-6FZQSDWEZJ"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    databaseURL: "YOUR_DATABASE_URL",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID",
+    measurementId: "YOUR_MEASUREMENT_ID"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Example function to write data to Firebase Realtime Database
-function writeScooterData(scooterId, name, status) {
-  set(ref(db, 'scooters/' + scooterId), {
-    name: name,
-    status: status
-  });
-}
-
-// Example function to read data from Firebase Realtime Database
-function readScooterData() {
-  const dbRef = ref(db, 'scooters/');
-  onValue(dbRef, (snapshot) => {
-    snapshot.forEach((childSnapshot) => {
-      const childKey = childSnapshot.key;
-      const childData = childSnapshot.val();
-      console.log(childKey, childData); // Output the key and data for each child
-    });
-  });
-}
-
-// Using the functions
-writeScooterData('scooter1', 'Scooter Model X', 'disponibile');
-readScooterData();
+new Vue({
+    el: '#app',
+    data: {
+        scooters: [],
+        message: '',
+        isError: false
+    },
+    created() {
+        this.fetchScooters();
+    },
+    methods: {
+        fetchScooters() {
+            const dbRef = ref(db, 'scooters');
+            onValue(dbRef, (snapshot) => {
+                this.scooters = [];
+                snapshot.forEach((childSnapshot) => {
+                    const scooter = childSnapshot.val();
+                    scooter.id = childSnapshot.key;
+                    this.scooters.push(scooter);
+                });
+            });
+        },
+        toggleStatus(scooter) {
+            const newStatus = scooter.status === 'disponibile' ? 'noleggiato' : 'disponibile';
+            const days = newStatus === 'noleggiato' ? parseInt(prompt("Per quanti giorni vuoi noleggiare lo scooter?")) : 0;
+            if (!days && newStatus === 'noleggiato') {
+                this.message = 'Inserimento non valido. Riprova.';
+                this.isError = true;
+                return;
+            }
+            update(ref(db, 'scooters/' + scooter.id), { status: newStatus, rentalDays: days })
+                .then(() => {
+                    this.message = `Scooter ${newStatus === 'noleggiato' ? 'noleggiato per ' + days + ' giorni' : 'reso disponibile'}.`;
+                    this.isError = false;
+                })
+                .catch(error => {
+                    this.message = 'Errore: ' + error.message;
+                    this.isError = true;
+                });
+        },
+        unlockScooter(scooter) {
+            update(ref(db, 'scooters/' + scooter.id), { status: 'disponibile', rentalDays: 0 })
+                .then(() => {
+                    this.message = 'Scooter sbloccato e reso disponibile.';
+                    this.isError = false;
+                })
+                .catch(error => {
+                    this.message = 'Errore: ' + error.message;
+                    this.isError = true;
+                });
+        }
+    }
+});
