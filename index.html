@@ -44,10 +44,13 @@
         <div :class="['message', { error: isError }]" v-if="message">{{ message }}</div>
     </div>
 
+    <!-- Inclusione di Vue.js -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <!-- Inclusione di Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
-<script type="module" src="script.js"></script>
+    <!-- Inclusione dello script principale come modulo -->
+    <script type="module" src="script.js"></script>
 </body>
 </html>
 
